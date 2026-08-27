@@ -35,7 +35,13 @@
 
     <div class="form-row">
       <label for="enrollDate">Enrollment date</label>
-      <input id="enrollDate" type="date" name="enrollDate" [(ngModel)]="enrollDate" />
+      <input
+        id="enrollDate"
+        type="date"
+        name="enrollDate"
+        [(ngModel)]="enrollDate"
+        [min]="dateOfBirth || null"
+      />
     </div>
 
     <div class="form-row">

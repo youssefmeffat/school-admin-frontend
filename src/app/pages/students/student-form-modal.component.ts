@@ -89,6 +89,16 @@ export class StudentFormModalComponent implements OnInit, OnChanges {
       return;
     }
 
+    if (
+      this.dateOfBirth &&
+      this.enrollDate &&
+      this.enrollDate < this.dateOfBirth
+    ) {
+      this.error =
+        'Enrollment date cannot be earlier than date of birth.';
+      return;
+    }
+
     this.saving = true;
 
     const payload: StudentPayload = {
