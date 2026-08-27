@@ -2,8 +2,27 @@
   <form class="grade-form" (ngSubmit)="submit()" #form="ngForm">
     <div class="form-row">
       <label for="name">Grade name</label>
-      <input id="name" type="text" name="name" [(ngModel)]="name"
-             placeholder="e.g. Grade 1" [disabled]="saving" required />
+      <input
+        id="name"
+        type="text"
+        name="name"
+        [(ngModel)]="name"
+        (ngModelChange)="onNameChange()"
+        placeholder="e.g. Grade 1"
+        [disabled]="saving"
+        [class.input-error]="nameError"
+        [attr.aria-invalid]="nameError ? 'true' : null"
+        [attr.aria-describedby]="nameError ? 'grade-name-error' : null"
+        required
+      />
+
+      <p
+        id="grade-name-error"
+        class="form-error field-error"
+        *ngIf="nameError"
+      >
+        {{ nameError }}
+      </p>
     </div>
 
     <div class="form-row">
