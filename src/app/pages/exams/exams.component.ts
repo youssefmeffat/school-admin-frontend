@@ -30,6 +30,10 @@ import {
   ModalComponent,
 } from '../../shared/modal/modal.component';
 
+import {
+  ConfirmDialogService,
+} from '../../shared/confirm-dialog/confirm-dialog.service';
+
 @Component({
   selector: 'app-exams',
   standalone: true,
@@ -113,6 +117,7 @@ export class ExamsComponent
 
   constructor(
     private examService: ExamService,
+    private confirmDialogService: ConfirmDialogService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -349,18 +354,21 @@ export class ExamsComponent
   // Delete
   // ---------------------------------------------------------
 
-  deleteExam(exam: Exam): void {
+  async deleteExam(exam: Exam): Promise<void> {
     if (
       this.deletingId !== null
     ) {
       return;
     }
 
-    if (
-      !window.confirm(
-        `Delete "${exam.title}"? This cannot be undone.`
-      )
-    ) {
+    const confirmed = await this.confirmDialogService.confirm({
+      title: 'Delete exam',
+      message: `Delete "${exam.title}"? This cannot be undone.`,
+      confirmText: 'Delete',
+      danger: true,
+    });
+
+    if (!confirmed) {
       return;
     }
 

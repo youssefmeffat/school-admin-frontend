@@ -1,0 +1,87 @@
+// .confirm-panel also has the global "card" class in the template, so it
+// already inherits --white background, --line border, --radius-lg, and
+// --shadow-card. This file only handles positioning, icon chrome, and motion.
+
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 51, 42, 0.45); // forest-900 tint, matches the ledger palette
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100; // above app-modal (1000)
+  padding: 24px;
+  animation: confirm-backdrop-fade 0.18s ease both;
+}
+
+.confirm-panel {
+  width: 100%;
+  max-width: 380px;
+  padding: 28px 24px 24px;
+  text-align: center;
+  animation: confirm-panel-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.confirm-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ivy-100);
+  color: var(--forest-700);
+  animation: confirm-icon-pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) 0.08s both;
+}
+.confirm-icon svg { width: 24px; height: 24px; }
+
+.confirm-icon--danger {
+  background: var(--danger-100);
+  color: var(--danger);
+}
+
+.confirm-title {
+  font-size: 17px;
+  margin-bottom: 8px;
+}
+
+.confirm-message {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+@keyframes confirm-backdrop-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes confirm-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes confirm-icon-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
