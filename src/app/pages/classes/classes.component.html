@@ -62,9 +62,16 @@
 
     <div class="roster" *ngIf="c.studentCount > 0">
       <span class="roster-chip" *ngFor="let name of previewNames(c)">{{ name }}</span>
-      <span class="roster-chip roster-more" *ngIf="overflowCount(c) > 0">
+      <button
+        type="button"
+        class="roster-chip roster-more roster-more-button"
+        *ngIf="overflowCount(c) > 0"
+        (click)="openRoster(c)"
+        [attr.aria-label]="'Show all students in ' + c.name"
+        [title]="'Show all students in ' + c.name"
+      >
         +{{ overflowCount(c) }} more
-      </span>
+      </button>
     </div>
 
     <p class="roster-empty" *ngIf="c.studentCount === 0">
@@ -203,6 +210,52 @@
 >
   <p>No classes match this search.</p>
 </div>
+
+
+<app-modal
+  *ngIf="showRosterModal && rosterClass"
+  [title]="rosterClass.name + ' — Students'"
+  (closed)="closeRoster()"
+>
+  <div class="class-roster-modal">
+    <div class="class-roster-summary">
+      <span class="badge badge-green">
+        {{ rosterClass.studentCount }}
+        student{{ rosterClass.studentCount === 1 ? '' : 's' }}
+      </span>
+    </div>
+
+    <div
+      class="class-roster-list"
+      *ngIf="rosterClass.studentNames.length > 0"
+    >
+      <div
+        class="class-roster-item"
+        *ngFor="let name of rosterClass.studentNames; let i = index"
+      >
+        <span class="class-roster-number">{{ i + 1 }}</span>
+        <span class="class-roster-name">{{ name }}</span>
+      </div>
+    </div>
+
+    <p
+      class="roster-empty"
+      *ngIf="rosterClass.studentNames.length === 0"
+    >
+      No students assigned yet.
+    </p>
+
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="closeRoster()"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</app-modal>
 
 <app-class-form-modal
   *ngIf="showModal"

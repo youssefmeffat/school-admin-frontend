@@ -5,11 +5,12 @@ import { PageHeaderComponent } from '../../shared/page-header/page-header.compon
 import { ClassFormModalComponent } from './class-form-modal.component';
 import { SchoolClass } from '../../models/school-class';
 import { ClassesService } from '../../services/classes.service';
+import { ModalComponent } from '../../shared/modal/modal.component';
 
 @Component({
   selector: 'app-classes',
   standalone: true,
-  imports: [CommonModule, FormsModule, PageHeaderComponent, ClassFormModalComponent],
+  imports: [CommonModule, FormsModule, PageHeaderComponent, ClassFormModalComponent, ModalComponent],
   templateUrl: './classes.component.html',
   styleUrl: './classes.component.scss',
 })
@@ -32,6 +33,9 @@ export class ClassesComponent implements OnInit, OnDestroy {
 
   pendingDeleteId: number | null = null;
 
+  showRosterModal = false;
+  rosterClass: SchoolClass | null = null;
+
   private searchTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
@@ -47,6 +51,8 @@ export class ClassesComponent implements OnInit, OnDestroy {
     if (this.searchTimer) {
       clearTimeout(this.searchTimer);
     }
+
+    document.body.style.overflow = '';
   }
 
   fetch(page = this.currentPage): void {
@@ -148,6 +154,20 @@ export class ClassesComponent implements OnInit, OnDestroy {
 
   overflowCount(c: SchoolClass, limit = 4): number {
     return Math.max(0, c.studentNames.length - limit);
+  }
+
+  openRoster(c: SchoolClass): void {
+    this.rosterClass = c;
+    this.showRosterModal = true;
+    document.body.style.overflow = 'hidden';
+    this.cdr.detectChanges();
+  }
+
+  closeRoster(): void {
+    this.showRosterModal = false;
+    this.rosterClass = null;
+    document.body.style.overflow = '';
+    this.cdr.detectChanges();
   }
 
   openAddModal(): void {

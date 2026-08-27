@@ -278,3 +278,69 @@
   background: var(--surface);
   color: var(--danger);
 }
+
+.roster-more-button {
+  appearance: none;
+  font: inherit;
+  font-size: 0.7rem;
+  line-height: inherit;
+  padding: 5px 6px;
+  margin: 0;
+  border: none;
+  cursor: pointer;
+}
+
+.roster-more-button:hover {
+  background: inherit;
+}
+
+.roster-more-button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.class-roster-modal {
+  display: grid;
+  gap: 16px;
+}
+
+.class-roster-summary {
+  display: flex;
+  align-items: center;
+}
+
+.class-roster-list {
+  display: grid;
+  gap: 8px;
+  max-height: 420px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.class-roster-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+}
+
+.class-roster-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: 50%;
+  background: var(--surface);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.class-roster-name {
+  min-width: 0;
+  font-weight: 500;
+}
