@@ -23,6 +23,7 @@ export class GradeFormModalComponent implements OnInit, OnChanges {
   description = '';
   saving = false;
   error = '';
+  nameError = '';
 
   constructor(private gradesService: GradesService, private cdr: ChangeDetectorRef) {}
 
@@ -35,8 +36,17 @@ export class GradeFormModalComponent implements OnInit, OnChanges {
   get title(): string { return this.mode === 'edit' ? 'Edit grade' : 'Add grade'; }
 
   submit(): void {
+    this.error = '';
+    this.nameError = '';
+
     if (!this.name.trim()) {
-      this.error = 'Grade name is required.';
+      this.nameError = 'Grade name is required.';
+      return;
+    }
+
+    if (this.name.trim().length > 10) {
+      this.nameError =
+        'Grade name cannot be more than 10 characters.';
       return;
     }
     if (this.number === null || this.number < 1) {
@@ -72,11 +82,86 @@ export class GradeFormModalComponent implements OnInit, OnChanges {
     this.saved.emit();
   }
 
-  private handleSaveError(err: unknown): void {
+  private handleSaveError(err: any): void {
     console.error('Failed to save grade:', err);
+
     this.saving = false;
-    this.error = 'Could not save grade. Check the fields and try again.';
+    this.error = '';
+    this.nameError = '';
+
+    const backendMessage = this.extractErrorMessage(err);
+
+    if (
+      backendMessage
+        .toLowerCase()
+        .includes('grade') &&
+      backendMessage
+        .toLowerCase()
+        .includes('name') &&
+      backendMessage
+        .toLowerCase()
+        .includes('exists')
+    ) {
+      this.nameError =
+        'A grade with this name already exists.';
+    } else if (backendMessage) {
+      this.error = backendMessage;
+    } else {
+      this.error =
+        'Could not save grade. Check the fields and try again.';
+    }
+
     this.cdr.detectChanges();
+  }
+
+  private extractErrorMessage(err: any): string {
+    const body = err?.error;
+
+    if (typeof body === 'string') {
+      return body;
+    }
+
+    const message =
+      body?.message ??
+      body?.detail ??
+      body?.title ??
+      err?.message;
+
+    if (
+      typeof message === 'string' &&
+      message.trim()
+    ) {
+      return message.trim();
+    }
+
+    const errors = body?.errors;
+
+    if (
+      errors &&
+      typeof errors === 'object'
+    ) {
+      const messages = Object.values(errors)
+        .flatMap((value: any) =>
+          Array.isArray(value)
+            ? value
+            : [value]
+        )
+        .filter(
+          (value): value is string =>
+            typeof value === 'string' &&
+            value.trim().length > 0
+        );
+
+      if (messages.length > 0) {
+        return messages.join(' ');
+      }
+    }
+
+    return '';
+  }
+
+  onNameChange(): void {
+    this.nameError = '';
   }
 
   cancel(): void { this.closed.emit(); }
@@ -92,5 +177,6 @@ export class GradeFormModalComponent implements OnInit, OnChanges {
       this.description = '';
     }
     this.error = '';
+    this.nameError = '';
   }
 }

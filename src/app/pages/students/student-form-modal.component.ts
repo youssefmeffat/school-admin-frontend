@@ -41,6 +41,7 @@ export class StudentFormModalComponent implements OnInit, OnChanges {
 
   saving = false;
   error = '';
+  codeError = '';
 
   constructor(
     private studentsService: StudentsService,
@@ -80,13 +81,25 @@ export class StudentFormModalComponent implements OnInit, OnChanges {
   }
 
   submit(): void {
+    this.error = '';
+    this.codeError = '';
+
     if (!this.fullName.trim() || !this.code.trim()) {
       this.error = 'Full name and code are required.';
       return;
     }
 
+    if (
+      this.dateOfBirth &&
+      this.enrollDate &&
+      this.enrollDate < this.dateOfBirth
+    ) {
+      this.error =
+        'Enrollment date cannot be earlier than date of birth.';
+      return;
+    }
+
     this.saving = true;
-    this.error = '';
 
     const payload: StudentPayload = {
       fullName: this.fullName.trim(),
@@ -115,11 +128,83 @@ export class StudentFormModalComponent implements OnInit, OnChanges {
     this.cdr.detectChanges();
   }
 
-  private handleSaveError(err: unknown): void {
+  private handleSaveError(err: any): void {
     console.error('Failed to save student:', err);
+
     this.saving = false;
-    this.error = 'Could not save student. Check the fields and try again.';
+    this.error = '';
+    this.codeError = '';
+
+    const backendMessage = this.extractErrorMessage(err);
+
+    if (
+      backendMessage
+        .toLowerCase()
+        .includes('student code') ||
+      backendMessage
+        .toLowerCase()
+        .includes('code is already') ||
+      backendMessage
+        .toLowerCase()
+        .includes('code already')
+    ) {
+      this.codeError =
+        'This student code is already in use. Choose a different code.';
+    } else if (backendMessage) {
+      this.error = backendMessage;
+    } else {
+      this.error =
+        'Could not save student details. Please check the form and try again.';
+    }
+
     this.cdr.detectChanges();
+  }
+
+  private extractErrorMessage(err: any): string {
+    const body = err?.error;
+
+    if (typeof body === 'string') {
+      return body;
+    }
+
+    const directMessage =
+      body?.message ??
+      body?.detail ??
+      body?.title ??
+      err?.message;
+
+    if (
+      typeof directMessage === 'string' &&
+      directMessage.trim()
+    ) {
+      return directMessage.trim();
+    }
+
+    const validationErrors =
+      body?.errors;
+
+    if (
+      validationErrors &&
+      typeof validationErrors === 'object'
+    ) {
+      const messages = Object.values(validationErrors)
+        .flatMap((value: any) =>
+          Array.isArray(value)
+            ? value
+            : [value]
+        )
+        .filter(
+          (value): value is string =>
+            typeof value === 'string' &&
+            value.trim().length > 0
+        );
+
+      if (messages.length > 0) {
+        return messages.join(' ');
+      }
+    }
+
+    return '';
   }
 
   cancel(): void {
@@ -141,7 +226,13 @@ export class StudentFormModalComponent implements OnInit, OnChanges {
       this.classId = null;
     }
     this.error = '';
+    this.codeError = '';
   }
+
+  onCodeChange(): void {
+    this.codeError = '';
+  }
+
 
   private toDateInputValue(d: Date | null): string {
     if (!d) return '';

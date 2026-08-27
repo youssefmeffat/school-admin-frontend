@@ -114,6 +114,20 @@ export class ExamFormModalComponent
       : 'Create exam';
   }
 
+  get minExamDate(): string {
+    const today = new Date();
+
+    const year = today.getFullYear();
+    const month = String(
+      today.getMonth() + 1
+    ).padStart(2, '0');
+    const day = String(
+      today.getDate()
+    ).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
   /**
    * Load every subject once.
    *
@@ -361,6 +375,15 @@ export class ExamFormModalComponent
     ) {
       this.error =
         'Max score must be greater than 0.';
+      return;
+    }
+
+    if (
+      this.examDate &&
+      this.examDate < this.minExamDate
+    ) {
+      this.error =
+        'Exam date cannot be in the past.';
       return;
     }
 
