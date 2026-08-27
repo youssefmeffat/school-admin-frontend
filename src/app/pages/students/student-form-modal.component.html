@@ -7,7 +7,25 @@
 
     <div class="form-row">
       <label for="code">Student code</label>
-      <input id="code" type="text" name="code" [(ngModel)]="code" required />
+      <input
+        id="code"
+        type="text"
+        name="code"
+        [(ngModel)]="code"
+        (ngModelChange)="onCodeChange()"
+        [class.input-error]="codeError"
+        [attr.aria-invalid]="codeError ? 'true' : null"
+        [attr.aria-describedby]="codeError ? 'code-error' : null"
+        required
+      />
+
+      <p
+        id="code-error"
+        class="form-error field-error"
+        *ngIf="codeError"
+      >
+        {{ codeError }}
+      </p>
     </div>
 
     <div class="form-row">
