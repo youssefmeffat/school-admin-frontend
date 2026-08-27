@@ -21,6 +21,7 @@ export class SubjectFormModalComponent implements OnInit, OnChanges {
   name = '';
   saving = false;
   error = '';
+  nameError = '';
 
   constructor(private subjectsService: SubjectsService, private cdr: ChangeDetectorRef) {}
 
@@ -33,13 +34,21 @@ export class SubjectFormModalComponent implements OnInit, OnChanges {
   get title(): string { return this.mode === 'edit' ? 'Edit subject' : 'Add subject'; }
 
   submit(): void {
+    this.error = '';
+    this.nameError = '';
+
     if (!this.name.trim()) {
-      this.error = 'Subject name is required.';
+      this.nameError = 'Subject name is required.';
+      return;
+    }
+
+    if (this.name.trim().length > 25) {
+      this.nameError =
+        'Subject name cannot be more than 25 characters.';
       return;
     }
 
     this.saving = true;
-    this.error = '';
 
     const payload: SubjectPayload = {
       name: this.name.trim(),
@@ -64,11 +73,90 @@ export class SubjectFormModalComponent implements OnInit, OnChanges {
     this.cdr.detectChanges();
   }
 
-  private handleSaveError(err: unknown): void {
+  private handleSaveError(err: any): void {
     console.error('Failed to save subject:', err);
+
     this.saving = false;
-    this.error = 'Could not save subject. Check the name and try again.';
+    this.error = '';
+    this.nameError = '';
+
+    const backendMessage =
+      this.extractErrorMessage(err);
+
+    const normalized =
+      backendMessage.toLowerCase();
+
+    if (
+      normalized.includes('subject') &&
+      normalized.includes('name') &&
+      normalized.includes('exists')
+    ) {
+      this.nameError =
+        'A subject with this name already exists.';
+    } else if (
+      normalized.includes('subject name') &&
+      normalized.includes('25')
+    ) {
+      this.nameError =
+        'Subject name cannot be more than 25 characters.';
+    } else if (backendMessage) {
+      this.error = backendMessage;
+    } else {
+      this.error =
+        'Could not save subject. Check the name and try again.';
+    }
+
     this.cdr.detectChanges();
+  }
+
+  private extractErrorMessage(err: any): string {
+    const body = err?.error;
+
+    if (typeof body === 'string') {
+      return body;
+    }
+
+    const message =
+      body?.message ??
+      body?.detail ??
+      body?.title ??
+      err?.message;
+
+    if (
+      typeof message === 'string' &&
+      message.trim()
+    ) {
+      return message.trim();
+    }
+
+    const errors = body?.errors;
+
+    if (
+      errors &&
+      typeof errors === 'object'
+    ) {
+      const messages = Object.values(errors)
+        .flatMap((value: any) =>
+          Array.isArray(value)
+            ? value
+            : [value]
+        )
+        .filter(
+          (value): value is string =>
+            typeof value === 'string' &&
+            value.trim().length > 0
+        );
+
+      if (messages.length > 0) {
+        return messages.join(' ');
+      }
+    }
+
+    return '';
+  }
+
+  onNameChange(): void {
+    this.nameError = '';
   }
 
   cancel(): void { this.closed.emit(); }
@@ -76,5 +164,6 @@ export class SubjectFormModalComponent implements OnInit, OnChanges {
   private resetFormFromInput(): void {
     this.name = this.mode === 'edit' && this.subject ? this.subject.name : '';
     this.error = '';
+    this.nameError = '';
   }
 }
