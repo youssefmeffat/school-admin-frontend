@@ -43,6 +43,12 @@ export class GradeFormModalComponent implements OnInit, OnChanges {
       this.nameError = 'Grade name is required.';
       return;
     }
+
+    if (this.name.trim().length > 10) {
+      this.nameError =
+        'Grade name cannot be more than 10 characters.';
+      return;
+    }
     if (this.number === null || this.number < 1) {
       this.error = 'Grade number is required.';
       return;

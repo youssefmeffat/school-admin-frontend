@@ -9,6 +9,7 @@
         [(ngModel)]="name"
         (ngModelChange)="onNameChange()"
         placeholder="e.g. Grade 1"
+        maxlength="10"
         [disabled]="saving"
         [class.input-error]="nameError"
         [attr.aria-invalid]="nameError ? 'true' : null"
