@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
+import { ConfirmDialogComponent } from './shared/confirm-dialog/confirm-dialog.component';
 import { ChatbotComponent } from './shared/chatbot/chatbot.component';
 
 interface NavItem {
@@ -13,7 +14,7 @@ interface NavItem {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, ChatbotComponent],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, ChatbotComponent, ConfirmDialogComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
