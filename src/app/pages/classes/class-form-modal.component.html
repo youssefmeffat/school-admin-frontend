@@ -1,0 +1,76 @@
+<app-modal [title]="title" (closed)="cancel()">
+  <form class="class-form" (ngSubmit)="submit()" #form="ngForm">
+    <div class="form-row">
+      <label for="name">Class name</label>
+      <input id="name" type="text" name="name" [(ngModel)]="name" required />
+    </div>
+
+    <div class="form-row">
+      <label for="gradeId">Grade</label>
+      <select id="gradeId" name="gradeId" [(ngModel)]="gradeId"
+              [disabled]="gradesLoading || saving" required>
+        <option [ngValue]="null">— Select grade —</option>
+        <option *ngFor="let grade of grades" [ngValue]="grade.id">
+          {{ grade.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label>Students</label>
+      <div class="student-assignment">
+        <input type="text" name="studentSearch" class="student-search"
+               placeholder="Search students by name or code…"
+               [(ngModel)]="studentSearch"
+               [disabled]="studentsLoading || saving" />
+
+        <div class="student-assignment-meta">
+          <span>{{ selectedStudentCount }} selected</span>
+          <span>{{ students.length }} registered</span>
+        </div>
+
+        <div class="student-list" *ngIf="!studentsLoading">
+          <label class="student-option" *ngFor="let student of filteredStudents">
+            <input type="checkbox"
+                   [checked]="isSelected(student.id)"
+                   [disabled]="saving"
+                   (change)="toggleStudent(student.id)" />
+
+            <span class="student-option-name">
+              {{ student.fullName }}
+              <small>{{ student.code }}</small>
+            </span>
+
+            <span class="student-current-class" *ngIf="currentClassName(student)">
+              {{ currentClassName(student) }}
+            </span>
+          </label>
+
+          <div class="student-list-empty" *ngIf="filteredStudents.length === 0">
+            No registered students match your search.
+          </div>
+        </div>
+
+        <div class="student-list-loading" *ngIf="studentsLoading">
+          Loading registered students…
+        </div>
+      </div>
+    </div>
+
+    <p class="form-help" *ngIf="!studentsLoading">
+      Selecting a student who is currently in another class will move them to this class when you save.
+    </p>
+
+    <p class="form-error" *ngIf="error">{{ error }}</p>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost" (click)="cancel()" [disabled]="saving">
+        Cancel
+      </button>
+      <button type="submit" class="btn btn-primary"
+              [disabled]="saving || gradesLoading || studentsLoading">
+        {{ saving ? 'Saving…' : (mode === 'edit' ? 'Save changes' : 'Add class') }}
+      </button>
+    </div>
+  </form>
+</app-modal>

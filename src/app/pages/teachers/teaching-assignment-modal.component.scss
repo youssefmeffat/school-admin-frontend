@@ -1,0 +1,9 @@
+.assignment-form { display:flex; flex-direction:column; gap:14px; }
+.form-row { display:flex; flex-direction:column; gap:5px; }
+.form-row label { font-family:var(--font-body); font-size:12px; font-weight:700; letter-spacing:.02em; color:var(--muted); text-transform:uppercase; }
+.form-row select { width:100%; padding:9px 12px; border:1px solid var(--line-strong); border-radius:var(--radius-sm); background:var(--white); color:var(--ink); font-family:var(--font-body); font-size:13px; outline:none; }
+.form-row select:focus { border-color:var(--forest-700); }
+.form-help, .form-error { margin:0; font-size:12.5px; }
+.form-help { color:var(--muted); }
+.form-error { padding:8px 12px; background:var(--danger-100); color:var(--danger); border-radius:var(--radius-sm); }
+.form-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:6px; }

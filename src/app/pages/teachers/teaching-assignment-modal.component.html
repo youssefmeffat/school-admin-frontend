@@ -1,0 +1,124 @@
+<app-modal
+  title="Assign to class"
+  (closed)="cancel()"
+>
+  <form
+    class="assignment-form"
+    (ngSubmit)="submit()"
+  >
+
+    <!-- SUBJECT -->
+    <div class="form-row">
+      <label for="assignment-subject">
+        Subject
+      </label>
+
+      <select
+        id="assignment-subject"
+        name="subjectId"
+        [(ngModel)]="subjectId"
+        (ngModelChange)="onSubjectChange()"
+        [disabled]="loadingSubjects || saving"
+      >
+        <option [ngValue]="null">
+          Select subject
+        </option>
+
+        <option
+          *ngFor="let subject of subjects"
+          [ngValue]="subject.id"
+        >
+          {{ subject.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- CLASS -->
+    <div class="form-row">
+      <label for="assignment-class">
+        Class
+      </label>
+
+      <select
+        id="assignment-class"
+        name="classId"
+        [(ngModel)]="classId"
+        [disabled]="
+          subjectId === null ||
+          loadingClasses ||
+          saving
+        "
+      >
+        <option [ngValue]="null">
+          {{
+            subjectId === null
+              ? 'Select a subject first'
+              : loadingClasses
+                ? 'Loading classes…'
+                : 'Select class'
+          }}
+        </option>
+
+        <option
+          *ngFor="let schoolClass of classes"
+          [ngValue]="schoolClass.id"
+        >
+          {{ schoolClass.gradeName }} · {{ schoolClass.name }}
+        </option>
+      </select>
+
+      <p
+        class="form-help"
+        *ngIf="
+          subjectId !== null &&
+          !loadingClasses &&
+          classes.length === 0
+        "
+      >
+        No classes are available for this subject.
+      </p>
+    </div>
+
+    <p
+      class="form-help"
+      *ngIf="loadingSubjects"
+    >
+      Loading subjects…
+    </p>
+
+    <p
+      class="form-error"
+      *ngIf="error"
+    >
+      {{ error }}
+    </p>
+
+    <div class="form-actions">
+
+      <button
+        type="button"
+        class="btn btn-ghost"
+        (click)="cancel()"
+        [disabled]="saving"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="
+          loadingSubjects ||
+          loadingClasses ||
+          saving ||
+          subjectId === null ||
+          classId === null
+        "
+      >
+        {{ saving ? 'Assigning…' : 'Assign' }}
+      </button>
+
+    </div>
+
+  </form>
+</app-modal>

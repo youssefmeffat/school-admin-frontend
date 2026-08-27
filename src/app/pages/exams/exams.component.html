@@ -1,0 +1,637 @@
+<app-page-header
+  [eyebrow]="loading
+    ? 'Loading…'
+    : exams.length + ' of ' + totalCount + ' exams'"
+  title="Exams"
+  subtitle="Exams, schedules, and student results."
+>
+  <button
+    type="button"
+    class="btn btn-ghost icon-button header-icon-button"
+    (click)="fetchExams()"
+    [disabled]="loading"
+    title="Refresh exams"
+    aria-label="Refresh exams"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5"
+      ></path>
+      <path
+        d="M4 13a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5"
+      ></path>
+    </svg>
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-primary icon-button header-icon-button"
+    (click)="openCreate()"
+    title="Create exam"
+    aria-label="Create exam"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M12 5v14"></path>
+      <path d="M5 12h14"></path>
+    </svg>
+  </button>
+</app-page-header>
+
+
+<!-- STATUS FILTERS -->
+
+<div class="toolbar">
+
+  <div class="chip-row">
+
+    <button
+      *ngFor="let status of statuses"
+      class="chip"
+      [class.active]="
+        activeStatus === status
+      "
+      (click)="onStatusChange(status)"
+    >
+      {{ status }}
+    </button>
+
+  </div>
+
+  <input
+    type="text"
+    class="search-input"
+    placeholder="Search by exam, subject, or grade…"
+    [ngModel]="searchTerm"
+    (ngModelChange)="onSearchChange($event)"
+  />
+
+</div>
+
+
+<!-- LOADING -->
+
+<div
+  class="state-row"
+  *ngIf="loading"
+>
+  Loading exams…
+</div>
+
+
+<!-- ERROR -->
+
+<div
+  class="state-row error"
+  *ngIf="error && !loading"
+>
+  {{ error }}
+</div>
+
+
+<!-- EXAM TABLE -->
+
+<div
+  class="card table-card"
+  *ngIf="!loading && !error"
+>
+
+  <table class="data-table">
+
+    <thead>
+
+      <tr>
+        <th>Exam</th>
+        <th>Subject</th>
+        <th>Grade</th>
+        <th>Exam Date</th>
+        <th>Max Score</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+
+    </thead>
+
+
+    <tbody>
+
+      <tr
+        *ngFor="let exam of filtered"
+      >
+
+        <!-- EXAM -->
+
+        <td>
+
+          <span class="exam-title">
+            {{ exam.title }}
+          </span>
+
+          <span class="exam-id">
+            EXM-{{ exam.id }}
+          </span>
+
+        </td>
+
+
+        <!-- SUBJECT -->
+
+        <td>
+          {{ exam.subject }}
+        </td>
+
+
+        <!-- GRADE -->
+
+        <td>
+          {{ exam.grade }}
+        </td>
+
+
+        <!-- EXAM DATE -->
+
+        <td class="muted">
+
+          {{
+            exam.examDate
+              ? (exam.examDate | date:'MMM d, y')
+              : 'Unscheduled'
+          }}
+
+        </td>
+
+
+        <!-- MAX SCORE -->
+
+        <td>
+          {{ exam.maxScore ?? '—' }}
+        </td>
+
+
+        <!-- STATUS -->
+
+        <td>
+
+          <span
+            class="badge"
+            [class]="
+              badgeClass(exam.status)
+            "
+          >
+            {{ exam.status }}
+          </span>
+
+        </td>
+
+
+        <!-- ACTIONS -->
+
+        <td class="row-actions">
+          <div class="row-action-buttons">
+
+          <button
+            type="button"
+            class="link-btn icon-button row-icon-button"
+            [class.disabled]="
+              exam.status !== 'Completed'
+            "
+            [disabled]="
+              exam.status !== 'Completed'
+            "
+            (click)="openResults(exam)"
+            title="Open results"
+            aria-label="Open exam results"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+              ></path>
+              <circle cx="12" cy="12" r="2.5"></circle>
+            </svg>
+          </button>
+
+
+          <button
+            type="button"
+            class="link-btn icon-button row-icon-button"
+            (click)="openEdit(exam)"
+            title="Edit exam"
+            aria-label="Edit exam"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                d="M12 20h9"
+              ></path>
+              <path
+                d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"
+              ></path>
+            </svg>
+          </button>
+
+
+          <button
+            type="button"
+            class="link-btn danger icon-button row-icon-button"
+            [disabled]="
+              deletingId === exam.id
+            "
+            (click)="deleteExam(exam)"
+            title="Delete exam"
+            aria-label="Delete exam"
+          >
+            <svg
+              *ngIf="deletingId !== exam.id"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M3 6h18"></path>
+              <path d="M8 6V4h8v2"></path>
+              <path d="M19 6l-1 14H6L5 6"></path>
+              <path d="M10 11v5"></path>
+              <path d="M14 11v5"></path>
+            </svg>
+
+            <svg
+              *ngIf="deletingId === exam.id"
+              class="icon-spinner"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M20 12a8 8 0 1 1-2.34-5.66"></path>
+            </svg>
+          </button>
+
+          </div>
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+
+</div>
+
+
+<!-- PAGINATION -->
+
+<div
+  class="pagination"
+  *ngIf="!loading && !error && totalCount > 0"
+>
+  <div class="pagination-info">
+    Showing
+    <strong>{{ pageStart }}</strong>
+    –
+    <strong>{{ pageEnd }}</strong>
+    of
+    <strong>{{ totalCount }}</strong>
+    exams
+  </div>
+
+  <div class="pagination-controls">
+    <label class="page-size">
+      <span>Rows</span>
+
+      <select
+        [(ngModel)]="pageSize"
+        (ngModelChange)="onPageSizeChange()"
+      >
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="20">20</option>
+        <option [ngValue]="25">25</option>
+        <option [ngValue]="50">50</option>
+        <option [ngValue]="100">100</option>
+      </select>
+    </label>
+
+    <button
+      type="button"
+      class="page-btn"
+      (click)="previousPage()"
+      [disabled]="!hasPreviousPage"
+      aria-label="Previous page"
+    >
+      ‹
+    </button>
+
+    <button
+      type="button"
+      class="page-btn"
+      *ngFor="let page of pageNumbers"
+      [class.active]="page === currentPage"
+      (click)="goToPage(page)"
+    >
+      {{ page }}
+    </button>
+
+    <button
+      type="button"
+      class="page-btn"
+      (click)="nextPage()"
+      [disabled]="!hasNextPage"
+      aria-label="Next page"
+    >
+      ›
+    </button>
+  </div>
+</div>
+
+<div
+  class="empty"
+  *ngIf="!loading && !error && totalCount === 0"
+>
+  <p>No exams match the current search or status.</p>
+</div>
+
+
+<!-- ===================================================== -->
+<!-- CREATE / EDIT MODAL -->
+<!-- ===================================================== -->
+
+<app-exam-form-modal
+  *ngIf="showFormModal"
+  [mode]="modalMode"
+  [exam]="selectedExam"
+  (saved)="onSaved()"
+  (closed)="closeFormModal()"
+></app-exam-form-modal>
+
+
+<!-- ===================================================== -->
+<!-- RESULTS MODAL -->
+<!-- ===================================================== -->
+
+<app-modal
+  *ngIf="showResultsModal"
+  [title]="
+    selectedResultsExam
+      ? selectedResultsExam.title + ' — Results'
+      : 'Exam results'
+  "
+  (closed)="closeResults()"
+>
+
+
+  <!-- RESULTS SUMMARY -->
+
+  <div
+    class="results-summary"
+    *ngIf="selectedResultsExam"
+  >
+
+    <span>
+      {{ selectedResultsExam.subject }}
+    </span>
+
+    <span>
+      {{ selectedResultsExam.grade }}
+    </span>
+
+    <span>
+      Max score:
+      {{ selectedResultsExam.maxScore ?? '—' }}
+    </span>
+
+  </div>
+
+
+  <!-- LOADING -->
+
+  <div
+    class="state-row"
+    *ngIf="resultsLoading"
+  >
+    Loading students…
+  </div>
+
+
+  <!-- ERROR -->
+
+  <div
+    class="state-row error"
+    *ngIf="
+      resultsError &&
+      !resultsLoading
+    "
+  >
+    {{ resultsError }}
+  </div>
+
+
+  <!-- RESULTS -->
+
+  <div
+    class="results-table"
+    *ngIf="
+      !resultsLoading &&
+      !resultsError
+    "
+  >
+
+    <!-- =============================================== -->
+    <!-- STUDENT SEARCH -->
+    <!-- =============================================== -->
+
+    <div class="participant-search">
+
+      <input
+        type="text"
+        class="search-input"
+        [(ngModel)]="
+          participantSearch
+        "
+        (ngModelChange)="
+          onParticipantSearchChange()
+        "
+        placeholder="Search students..."
+        autocomplete="off"
+      />
+
+    </div>
+
+
+    <!-- =============================================== -->
+    <!-- STUDENT TABLE -->
+    <!-- =============================================== -->
+
+    <table
+      class="data-table"
+      *ngIf="
+        filteredParticipants.length > 0
+      "
+    >
+
+      <thead>
+
+        <tr>
+          <th>Student</th>
+          <th>Result</th>
+        </tr>
+
+      </thead>
+
+
+      <tbody>
+
+        <tr
+          *ngFor="
+            let participant
+            of filteredParticipants
+          "
+        >
+
+          <!-- STUDENT -->
+
+          <td>
+            {{ participant.studentName }}
+          </td>
+
+
+          <!-- SCORE -->
+
+          <td>
+
+            <div class="score-input">
+
+              <input
+                type="number"
+                min="0"
+                [max]="
+                  selectedResultsExam?.maxScore ?? null
+                "
+                step="0.01"
+
+                [ngModel]="
+                  resultScores[
+                    participant.studentId
+                  ]
+                "
+
+                (ngModelChange)="
+                  resultScores[
+                    participant.studentId
+                  ] =
+                    $event === '' ||
+                    $event === null
+                      ? null
+                      : +$event
+                "
+
+                [disabled]="
+                  savingResults
+                "
+              />
+
+              <span>
+                /
+                {{
+                  selectedResultsExam?.maxScore
+                }}
+              </span>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+
+    <!-- NO SEARCH RESULTS -->
+
+    <div
+      class="empty"
+      *ngIf="
+        participants.length > 0 &&
+        filteredParticipants.length === 0
+      "
+    >
+      <p>
+        No students match
+        "{{ participantSearch }}".
+      </p>
+    </div>
+
+
+    <!-- NO STUDENTS AT ALL -->
+
+    <div
+      class="empty"
+      *ngIf="
+        participants.length === 0
+      "
+    >
+      <p>
+        There are no students in this grade.
+      </p>
+    </div>
+
+  </div>
+
+
+  <!-- SAVE ERROR -->
+
+  <p
+    class="form-error"
+    *ngIf="resultsSaveError"
+  >
+    {{ resultsSaveError }}
+  </p>
+
+
+  <!-- ACTIONS -->
+
+  <div class="form-actions">
+
+    <button
+      type="button"
+      class="btn btn-ghost"
+      (click)="closeResults()"
+      [disabled]="savingResults"
+    >
+      Cancel
+    </button>
+
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="saveResults()"
+      [disabled]="
+        savingResults ||
+        resultsLoading ||
+        participants.length === 0
+      "
+    >
+      {{
+        savingResults
+          ? 'Saving results…'
+          : 'Save results'
+      }}
+    </button>
+
+  </div>
+
+</app-modal>

@@ -1,0 +1,1069 @@
+/* =====================================================
+   STAT CARDS
+   ===================================================== */
+
+.stat-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+
+  gap: 16px;
+
+  margin-bottom: 20px;
+
+  width: 100%;
+
+  min-width: 0;
+}
+
+
+/* =====================================================
+   DASHBOARD GRID
+   ===================================================== */
+
+.dashboard-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+
+  width: 100%;
+
+  min-width: 0;
+
+  margin-bottom: 16px;
+}
+
+
+/* =====================================================
+   PANELS
+   ===================================================== */
+
+.panel {
+  padding: 20px 22px;
+
+  width: 100%;
+
+  max-width: 100%;
+
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+
+/* =====================================================
+   PANEL HEADER
+   ===================================================== */
+
+.panel-head {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 16px;
+
+  min-width: 0;
+}
+
+.panel-head > div:first-child {
+  min-width: 0;
+}
+
+.panel-head h2 {
+  margin: 0;
+
+  font-size: 16px;
+}
+
+.panel-note {
+  display: block;
+
+  margin-top: 4px;
+
+  font-size: 12px;
+
+  color: var(--muted);
+
+  white-space: nowrap;
+}
+
+
+/* =====================================================
+   GRADE / LEVEL SELECT
+   ===================================================== */
+
+.level-select {
+  appearance: none;
+
+  -webkit-appearance: none;
+
+  border: 1px solid var(--line);
+
+  border-radius: 8px;
+
+  background-color: white;
+
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      var(--muted) 50%
+    ),
+    linear-gradient(
+      135deg,
+      var(--muted) 50%,
+      transparent 50%
+    );
+
+  background-position:
+    calc(100% - 13px) 50%,
+    calc(100% - 9px) 50%;
+
+  background-size:
+    4px 4px,
+    4px 4px;
+
+  background-repeat: no-repeat;
+
+  color: var(--forest-900);
+
+  padding: 7px 30px 7px 10px;
+
+  font-family: inherit;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  line-height: 1.4;
+
+  cursor: pointer;
+
+  max-width: 150px;
+
+  min-width: 110px;
+
+  box-sizing: border-box;
+
+  flex-shrink: 0;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.level-select:hover {
+  border-color: var(--forest-700);
+
+  background-color: #fcfdfc;
+}
+
+.level-select:focus {
+  outline: none;
+
+  border-color: var(--forest-700);
+
+  box-shadow:
+    0 0 0 2px
+    rgba(0, 70, 45, 0.08);
+}
+
+.level-select:active {
+  border-color: var(--forest-800);
+}
+
+.level-select:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+.level-select option {
+  color: var(--forest-900);
+
+  background: white;
+
+  font-family: inherit;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+
+/* =====================================================
+   ERROR / STATE
+   ===================================================== */
+
+.dashboard-error {
+  margin-bottom: 16px;
+
+  padding: 12px 14px;
+
+  border-radius: 8px;
+
+  background: var(--danger-100);
+
+  color: var(--danger);
+
+  font-size: 13px;
+}
+
+.dashboard-panel-state {
+  padding: 30px 0;
+
+  text-align: center;
+
+  color: var(--muted);
+
+  font-size: 13px;
+}
+
+
+/* =====================================================
+   BARS
+   ===================================================== */
+
+.bars {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+
+  width: 100%;
+
+  min-width: 0;
+}
+
+.bar-row {
+  display: grid;
+
+  grid-template-columns:
+    42px
+    minmax(0, 1fr)
+    34px;
+
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+}
+
+.class-bar-row {
+  grid-template-columns:
+    minmax(90px, 1fr)
+    minmax(0, 2fr)
+    42px;
+}
+
+.subject-bar-row {
+  grid-template-columns:
+    minmax(90px, 1fr)
+    minmax(0, 2fr)
+    48px;
+}
+
+.bar-label {
+  font-size: 12.5px;
+
+  color: var(--muted);
+
+  font-weight: 600;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  min-width: 0;
+}
+
+.bar-track {
+  height: 10px;
+
+  border-radius: 999px;
+
+  background: var(--sage-100);
+
+  overflow: hidden;
+
+  min-width: 0;
+}
+
+.bar-fill {
+  height: 100%;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--forest-700),
+      var(--ivy-500)
+    );
+}
+
+.bar-value {
+  font-family: var(--font-mono);
+
+  font-size: 12.5px;
+
+  text-align: right;
+
+  color: var(--forest-900);
+
+  white-space: nowrap;
+}
+
+
+/* =====================================================
+   UPCOMING EXAMS
+   ===================================================== */
+
+.exam-list {
+  list-style: none;
+
+  margin: 0;
+
+  padding: 0;
+
+  display: flex;
+
+  flex-direction: column;
+}
+
+.exam-list li {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 11px 0;
+
+  border-bottom:
+    1px solid var(--line);
+
+  min-width: 0;
+}
+
+.exam-list li:last-child {
+  border-bottom: none;
+
+  padding-bottom: 0;
+}
+
+.exam-title {
+  display: block;
+
+  font-weight: 600;
+
+  font-size: 13.5px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.exam-class {
+  display: block;
+
+  font-size: 12px;
+
+  color: var(--muted);
+
+  margin-top: 2px;
+}
+
+.exam-date {
+  font-family: var(--font-mono);
+
+  font-size: 12px;
+
+  color: var(--brass);
+
+  white-space: nowrap;
+
+  flex-shrink: 0;
+}
+
+
+/* =====================================================
+   TEACHERS
+   ===================================================== */
+
+.teachers-panel {
+  min-width: 0;
+}
+
+.teacher-list {
+  display: flex;
+
+  flex-direction: column;
+
+  width: 100%;
+
+  min-width: 0;
+}
+
+.teacher-item {
+  width: 100%;
+
+  min-width: 0;
+
+  border-bottom:
+    1px solid var(--line);
+}
+
+.teacher-item:last-child {
+  border-bottom: none;
+}
+
+
+/*
+ * Teacher header.
+ *
+ * This is a BUTTON in the HTML, so we explicitly
+ * reset the browser's default button styling.
+ */
+
+.teacher-row {
+  appearance: none;
+
+  -webkit-appearance: none;
+
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    24px
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 12px 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--forest-900);
+
+  font-family: inherit;
+
+  font-size: inherit;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+}
+
+.teacher-row:hover {
+  background:
+    rgba(0, 0, 0, 0.015);
+}
+
+.teacher-row:focus-visible {
+  outline: none;
+
+  border-radius: 6px;
+
+  box-shadow:
+    inset 0 0 0 2px
+    rgba(0, 70, 45, 0.12);
+}
+
+
+/* =====================================================
+   TEACHER EXPAND ICON
+   ===================================================== */
+
+.teacher-expand {
+  width: 22px;
+
+  height: 22px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 6px;
+
+  background: var(--sage-100);
+
+  color: var(--forest-800);
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  line-height: 1;
+}
+
+
+/* =====================================================
+   TEACHER NAME
+   ===================================================== */
+
+.teacher-name {
+  min-width: 0;
+
+  font-size: 13.5px;
+
+  font-weight: 600;
+
+  color: var(--forest-900);
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+/* =====================================================
+   CLASS COUNT
+   ===================================================== */
+
+.teacher-class-count {
+  font-size: 11.5px;
+
+  color: var(--muted);
+
+  white-space: nowrap;
+}
+
+
+/* =====================================================
+   EXPANDED TEACHER DETAILS
+   ===================================================== */
+
+.teacher-details {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding:
+    0 0 10px 32px;
+}
+
+
+/* =====================================================
+   INDIVIDUAL CLASS
+   ===================================================== */
+
+.teacher-class {
+  padding: 10px 0;
+
+  border-top:
+    1px solid var(--line);
+}
+
+.teacher-class:first-child {
+  border-top: none;
+}
+
+
+/* =====================================================
+   CLASS NAME + GRADE
+   ===================================================== */
+
+.teacher-class-heading {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  min-width: 0;
+}
+
+.teacher-class-heading > span:first-child {
+  min-width: 0;
+
+  font-size: 12.5px;
+
+  font-weight: 600;
+
+  color: var(--forest-900);
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.teacher-grade {
+  flex-shrink: 0;
+
+  font-size: 11px;
+
+  font-weight: 500;
+
+  color: var(--muted);
+
+  white-space: nowrap;
+}
+
+
+/* =====================================================
+   SUBJECTS
+   ===================================================== */
+
+.teacher-subjects {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+  margin-top: 7px;
+}
+
+.teacher-subject {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 4px 9px;
+
+  border-radius: 999px;
+
+  background: var(--sage-100);
+
+  color: var(--forest-800);
+
+  font-size: 10.5px;
+
+  font-weight: 600;
+
+  line-height: 1.3;
+}
+
+.teacher-no-subject {
+  margin-top: 7px;
+
+  font-size: 11px;
+
+  color: var(--muted);
+}
+
+
+/* =====================================================
+   ATTENDANCE
+   ===================================================== */
+
+.attendance-panel {
+  width: 100%;
+
+  max-width: 100%;
+
+  min-width: 0;
+
+  box-sizing: border-box;
+}
+
+.attendance-toggle {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 3px;
+
+  padding: 3px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius: 10px;
+
+  background: var(--sage-100);
+
+  flex-shrink: 0;
+}
+
+.attendance-toggle button {
+  border: none;
+
+  background: transparent;
+
+  padding: 6px 12px;
+
+  border-radius: 7px;
+
+  font-family: inherit;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  color: var(--muted);
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.attendance-toggle button:hover {
+  color: var(--forest-900);
+}
+
+.attendance-toggle button.active {
+  background: white;
+
+  color: var(--forest-900);
+
+  box-shadow:
+    0 1px 3px
+    rgba(0, 0, 0, 0.08);
+}
+
+
+/* =====================================================
+   ATTENDANCE HEATMAP
+   ===================================================== */
+
+.attendance-heatmap {
+  display: grid;
+
+  grid-template-columns:
+    repeat(7, minmax(0, 1fr));
+
+  gap: 6px;
+
+  width: 100%;
+
+  max-width: 100%;
+
+  min-width: 0;
+
+  box-sizing: border-box;
+}
+
+.attendance-day {
+  width: 100%;
+
+  height: 34px;
+
+  min-width: 0;
+
+  min-height: 34px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  border-radius: 6px;
+
+  font-family: var(--font-mono);
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  color: var(--forest-900);
+
+  cursor: default;
+
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.attendance-day:hover {
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 2px 6px
+    rgba(0, 0, 0, 0.10);
+}
+
+
+/* =====================================================
+   ATTENDANCE COLORS
+   ===================================================== */
+
+.attendance-0,
+.legend-0 {
+  background: #e4e7e5;
+
+  color: #68706c;
+}
+
+.attendance-1 {
+  background: #d8e8dc;
+}
+
+.attendance-2,
+.legend-25 {
+  background: #c4dfcb;
+}
+
+.attendance-3,
+.legend-50 {
+  background: #afd5b9;
+}
+
+.attendance-4,
+.legend-75 {
+  background: #91c59f;
+}
+
+.attendance-5,
+.legend-100 {
+  background: #70b184;
+
+  color: white;
+}
+
+.attendance-future {
+  background: #c8ccca;
+
+  color: #858b87;
+}
+
+
+/* =====================================================
+   ATTENDANCE LEGEND
+   ===================================================== */
+
+.attendance-legend {
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  margin-top: 14px;
+
+  font-size: 11px;
+
+  color: var(--muted);
+
+  flex-wrap: wrap;
+}
+
+.legend-square {
+  width: 12px;
+
+  height: 12px;
+
+  min-width: 12px;
+
+  min-height: 12px;
+
+  display: inline-block;
+
+  border-radius: 3px;
+
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+}
+
+
+/*
+ * The legend uses its own explicit classes because
+ * the HTML contains legend-low / legend-mid /
+ * legend-high / legend-max.
+ *
+ * These now correspond to progressively higher
+ * attendance levels.
+ */
+
+.legend-low {
+  background: #d8e8dc;
+}
+
+.legend-mid {
+  background: #afd5b9;
+}
+
+.legend-high {
+  background: #91c59f;
+}
+
+.legend-max {
+  background: #70b184;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 1100px) {
+
+  .stat-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 700px) {
+
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-head {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .level-select {
+    width: 100%;
+
+    max-width: none;
+  }
+
+  .attendance-toggle {
+    width: 100%;
+  }
+
+  .attendance-toggle button {
+    flex: 1;
+  }
+
+  .bar-row {
+    grid-template-columns:
+      38px
+      minmax(0, 1fr)
+      32px;
+  }
+
+  .class-bar-row,
+  .subject-bar-row {
+    grid-template-columns:
+      minmax(80px, 1fr)
+      minmax(0, 1.5fr)
+      42px;
+  }
+
+  .attendance-heatmap {
+    gap: 5px;
+  }
+
+  .attendance-day {
+    height: 30px;
+
+    min-height: 30px;
+
+    border-radius: 5px;
+
+    font-size: 10px;
+  }
+
+  .teacher-details {
+    padding-left: 28px;
+  }
+
+  .teacher-class-heading {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 3px;
+  }
+}
+
+/* =====================================================
+   TEACHERS PANEL
+   ===================================================== */
+
+.teachers-panel {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.teachers-panel .panel-head {
+  flex: 0 0 auto;
+}
+
+.teacher-list-scroll {
+  min-height: 0;
+  height: 220px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  overscroll-behavior: contain;
+}
+
+.teacher-list {
+  min-width: 0;
+}
+
+.teacher-item {
+  min-width: 0;
+}
+
+.teacher-row {
+  width: 100%;
+}
+
+.teacher-details {
+  min-width: 0;
+}
+
+/* Keep the scrollbar subtle and consistent with the dashboard. */
+.teacher-list-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.teacher-list-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.teacher-list-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+}
+
+/* Approximately four collapsed teacher rows are visible at once. */
+.teacher-row {
+  min-height: 52px;
+}

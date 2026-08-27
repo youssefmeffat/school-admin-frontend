@@ -1,0 +1,256 @@
+.toolbar { margin-bottom: 14px; }
+
+.search-input {
+  width: 100%;
+  max-width: 420px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  padding: 9px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--ink);
+  outline: none;
+}
+
+.search-input:focus { border-color: var(--forest-700); }
+
+.state-row {
+  padding: 40px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13.5px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.state-row.error { color: var(--danger); }
+
+.subject-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.subject-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.subject-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.subject-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--brass);
+  margin-bottom: 4px;
+}
+
+.subject-top h3 { margin: 0; font-size: 18px; }
+
+.subject-id {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.summary-row { display: flex; align-items: center; gap: 9px; }
+
+.summary-count { font-size: 11.5px; color: var(--muted); }
+
+.section { border-top: 1px solid var(--line); padding-top: 12px; }
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 9px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.chip-list, .grade-summary { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.chip, .grade-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--sage-50);
+  font-size: 11.5px;
+}
+
+.muted-empty {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.assignment-tree { display: flex; flex-direction: column; gap: 10px; }
+
+.grade-group {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.grade-heading {
+  padding: 7px 10px;
+  background: var(--sage-50);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.class-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 10px;
+  padding: 8px 10px;
+  border-top: 1px solid var(--line);
+  font-size: 11.5px;
+}
+
+.class-name { color: var(--ink); font-weight: 600; }
+.class-teachers { color: var(--muted); text-align: right; }
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--forest-700);
+  font-weight: 600;
+  font-size: 12.5px;
+}
+
+.link-btn:hover { color: var(--forest-900); }
+.link-btn.danger { color: var(--danger); }
+.link-btn.danger:hover { color: #8f322c; }
+
+.empty {
+  grid-column: 1 / -1;
+  padding: 40px;
+  text-align: center;
+  color: var(--muted);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+@media (max-width: 620px) {
+  .class-row { grid-template-columns: 1fr; }
+  .class-teachers { text-align: left; }
+}
+
+/* =========================================================
+   ICON BUTTONS
+   ========================================================= */
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 0;
+}
+
+.icon-button svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.header-icon-button {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  padding: 0;
+}
+
+.header-icon-button svg {
+  width: 19px;
+  height: 19px;
+}
+
+.section-icon-button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+}
+
+.section-icon-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.card-actions {
+  text-align: right;
+}
+
+.card-action-buttons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  vertical-align: middle;
+}
+
+.row-icon-button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+
+  background: var(--white);
+}
+
+.row-icon-button:hover:not(:disabled) {
+  border-color: var(--line-strong);
+  background: var(--surface);
+}
+
+.row-icon-button.danger {
+  background: var(--white);
+  color: var(--danger);
+}
+
+.row-icon-button.danger:hover:not(:disabled) {
+  background: var(--surface);
+  color: var(--danger);
+}
+
+.row-icon-button svg {
+  width: 16px;
+  height: 16px;
+}

@@ -1,0 +1,790 @@
+<app-page-header
+  [eyebrow]="
+    loading
+      ? 'Loading…'
+      : students.length + ' of ' + totalCount + ' records'
+  "
+  title="Students"
+  subtitle="Manage enrollment, class assignment, and student records."
+>
+  <button
+    type="button"
+    class="btn btn-ghost icon-button header-icon-button"
+    (click)="fetch()"
+    title="Refresh students"
+    aria-label="Refresh students"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5"></path>
+      <path d="M4 13a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5"></path>
+    </svg>
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-primary icon-button header-icon-button"
+    (click)="openAddModal()"
+    title="Add student"
+    aria-label="Add student"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 5v14"></path>
+      <path d="M5 12h14"></path>
+    </svg>
+  </button>
+</app-page-header>
+
+
+<div class="toolbar">
+
+  <input
+    type="text"
+    class="search-input"
+    placeholder="Search by name, code, or class…"
+    [(ngModel)]="searchTerm"
+    (ngModelChange)="onSearchChange()"
+  />
+
+</div>
+
+
+<div class="card table-card">
+
+  <!-- =====================================================
+       PAGE STATES
+       ===================================================== -->
+
+  <div
+    class="state-row"
+    *ngIf="loading"
+  >
+    Loading students…
+  </div>
+
+
+  <div
+    class="state-row error"
+    *ngIf="error && !loading"
+  >
+    {{ error }}
+  </div>
+
+
+  <!-- =====================================================
+       STUDENT TABLE
+       ===================================================== -->
+
+  <table
+    class="data-table"
+    *ngIf="!loading && !error"
+  >
+
+    <thead>
+
+      <tr>
+
+        <th>Student</th>
+
+        <th>Class</th>
+
+        <th>Date of birth</th>
+
+        <th>Enrolled</th>
+
+        <th></th>
+
+      </tr>
+
+    </thead>
+
+
+    <tbody>
+
+      <ng-container
+        *ngFor="let s of paginatedStudents"
+      >
+
+        <!-- =================================================
+             STUDENT ROW
+             ================================================= -->
+
+        <tr
+          class="student-row"
+          [class.expanded]="
+            isExpanded(s.id)
+          "
+          (click)="toggleStudent(s)"
+          [attr.aria-expanded]="
+            isExpanded(s.id)
+          "
+        >
+
+          <td>
+
+            <div class="student-cell">
+
+              <button
+                type="button"
+                class="student-expand icon-button student-expand-icon"
+                (click)="
+                  $event.stopPropagation();
+                  toggleStudent(s)
+                "
+                [attr.aria-label]="
+                  isExpanded(s.id)
+                    ? 'Collapse student details'
+                    : 'Expand student details'
+                "
+                [title]="
+                  isExpanded(s.id)
+                    ? 'Collapse student details'
+                    : 'Expand student details'
+                "
+              >
+                <svg
+                  *ngIf="!isExpanded(s.id)"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path d="M12 5v14"></path>
+                  <path d="M5 12h14"></path>
+                </svg>
+
+                <svg
+                  *ngIf="isExpanded(s.id)"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path d="M5 12h14"></path>
+                </svg>
+              </button>
+
+
+              <span
+                class="seal row-seal"
+              >
+                {{ initials(s) }}
+              </span>
+
+
+              <div>
+
+                <span
+                  class="student-name"
+                >
+                  {{ s.fullName }}
+                </span>
+
+                <span
+                  class="student-id"
+                >
+                  {{ s.code }}
+                </span>
+
+              </div>
+
+            </div>
+
+          </td>
+
+
+          <td>
+            {{ s.className ?? '—' }}
+          </td>
+
+
+          <td class="muted">
+
+            {{
+              s.dateOfBirth
+                ? (
+                    s.dateOfBirth
+                    | date: 'MMM d, y'
+                  )
+                : '—'
+            }}
+
+          </td>
+
+
+          <td class="muted">
+
+            {{
+              s.enrollDate
+                ? (
+                    s.enrollDate
+                    | date: 'MMM d, y'
+                  )
+                : '—'
+            }}
+
+          </td>
+
+
+          <td
+            class="row-action"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="row-action-buttons">
+
+              <ng-container
+                *ngIf="
+                  pendingDeleteId === s.id;
+                  else rowActions
+                "
+              >
+                <button
+                  type="button"
+                  class="link-btn danger icon-button row-icon-button"
+                  (click)="deleteStudent(s.id)"
+                  title="Confirm delete"
+                  aria-label="Confirm delete student"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="m5 12 4 4L19 6"></path>
+                  </svg>
+                </button>
+
+                <button
+                  type="button"
+                  class="link-btn icon-button row-icon-button"
+                  (click)="cancelDelete()"
+                  title="Cancel delete"
+                  aria-label="Cancel delete"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M6 6l12 12"></path>
+                    <path d="M18 6 6 18"></path>
+                  </svg>
+                </button>
+              </ng-container>
+
+              <ng-template #rowActions>
+                <button
+                  type="button"
+                  class="link-btn icon-button row-icon-button"
+                  (click)="openEditModal(s)"
+                  title="Edit student"
+                  aria-label="Edit student"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
+                  </svg>
+                </button>
+
+                <button
+                  type="button"
+                  class="link-btn danger icon-button row-icon-button"
+                  (click)="confirmDelete(s.id)"
+                  title="Delete student"
+                  aria-label="Delete student"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M3 6h18"></path>
+                    <path d="M8 6V4h8v2"></path>
+                    <path d="M19 6l-1 14H6L5 6"></path>
+                    <path d="M10 11v5"></path>
+                    <path d="M14 11v5"></path>
+                  </svg>
+                </button>
+              </ng-template>
+
+            </div>
+          </td>
+
+        </tr>
+
+
+        <!-- =================================================
+             EXPANDED STUDENT DETAILS
+             ================================================= -->
+
+        <tr
+          class="student-details-row"
+          *ngIf="isExpanded(s.id)"
+        >
+
+          <td
+            colspan="5"
+            class="student-details-cell"
+          >
+
+            <div class="student-details">
+
+              <!-- ===========================================
+                   LOADING
+                   =========================================== -->
+
+              <div
+                class="student-details-state"
+                *ngIf="
+                  getDetails(s.id).loading
+                "
+              >
+
+                <span
+                  class="details-spinner"
+                ></span>
+
+                Loading student details…
+
+              </div>
+
+
+              <!-- ===========================================
+                   ERROR
+                   =========================================== -->
+
+              <div
+                class="student-details-error"
+                *ngIf="
+                  !getDetails(s.id).loading &&
+                  getDetails(s.id).error
+                "
+              >
+
+                {{ getDetails(s.id).error }}
+
+              </div>
+
+
+              <!-- ===========================================
+                   DETAILS
+                   =========================================== -->
+
+              <ng-container
+                *ngIf="
+                  !getDetails(s.id).loading
+                "
+              >
+
+                <div
+                  class="student-details-grid"
+                >
+
+                  <!-- =====================================
+                       EXAM RESULTS
+                       ===================================== -->
+
+                  <section
+                    class="student-detail-panel"
+                  >
+
+                    <div
+                      class="student-detail-panel-head"
+                    >
+
+                      <div>
+
+                        <h3>
+                          Exam grades
+                        </h3>
+
+                        <span>
+                          {{
+                            getDetails(s.id)
+                              .exams.length
+                          }}
+                          recorded
+                        </span>
+
+                      </div>
+
+                    </div>
+
+
+                    <div
+                      class="student-exam-list"
+                      *ngIf="
+                        getDetails(s.id)
+                          .exams.length > 0
+                      "
+                    >
+
+                      <div
+                        class="student-exam-item"
+                        *ngFor="
+                          let exam of
+                          getDetails(s.id)
+                            .exams
+                        "
+                      >
+
+                        <div
+                          class="student-exam-main"
+                        >
+
+                          <strong>
+                            {{
+                              examName(
+                                exam
+                              )
+                            }}
+                          </strong>
+
+                          <span>
+                            {{
+                              examSubject(
+                                exam
+                              )
+                            }}
+                            <ng-container
+                              *ngIf="
+                                examGrade(
+                                  exam
+                                ) !== '—'
+                              "
+                            >
+                              ·
+                              {{
+                                examGrade(
+                                  exam
+                                )
+                              }}
+                            </ng-container>
+                          </span>
+
+                        </div>
+
+
+                        <div
+                          class="student-exam-score"
+                        >
+
+                          <strong>
+                            {{
+                              examScore(
+                                exam
+                              )
+                            }}
+                          </strong>
+
+                          <span
+                            [class.good]="
+                              (
+                                examPercentage(
+                                  exam
+                                ) ?? 0
+                              ) >= 80
+                            "
+                            [class.average]="
+                              (
+                                examPercentage(
+                                  exam
+                                ) ?? 0
+                              ) >= 60 &&
+                              (
+                                examPercentage(
+                                  exam
+                                ) ?? 0
+                              ) < 80
+                            "
+                            [class.low]="
+                              examPercentage(
+                                exam
+                              ) !== null &&
+                              (
+                                examPercentage(
+                                  exam
+                                ) ?? 0
+                              ) < 60
+                            "
+                          >
+                            {{
+                              examPercentageText(
+                                exam
+                              )
+                            }}
+                          </span>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+
+                    <div
+                      class="student-details-empty"
+                      *ngIf="
+                        getDetails(s.id)
+                          .exams.length === 0
+                      "
+                    >
+                      No exam grades have been
+                      recorded for this student yet.
+                    </div>
+
+                  </section>
+
+
+                  <!-- =====================================
+                       ATTENDANCE
+                       ===================================== -->
+
+                  <section
+                    class="student-detail-panel"
+                  >
+
+                    <div
+                      class="student-detail-panel-head"
+                    >
+
+                      <div>
+
+                        <h3>
+                          Attendance
+                        </h3>
+
+                        <span>
+                          Past 7 days
+                        </span>
+
+                      </div>
+
+                    </div>
+
+
+                    <div
+                      class="student-attendance-list"
+                    >
+
+                      <div
+                        class="student-attendance-item"
+                        *ngFor="
+                          let day of
+                          getAttendanceDays(
+                            s.id
+                          )
+                        "
+                        [class.weekend]="
+                          day.isWeekend
+                        "
+                      >
+
+                        <div
+                          class="attendance-day"
+                        >
+
+                          <strong>
+                            {{
+                              attendanceDate(
+                                day.date
+                              )
+                            }}
+                          </strong>
+
+                        </div>
+
+
+                        <div
+                          class="attendance-status"
+                          [ngClass]="
+                            attendanceClass(
+                              day
+                            )
+                          "
+                        >
+
+                          <span
+                            class="attendance-status-icon"
+                          >
+                            {{
+                              attendanceIcon(
+                                day
+                              )
+                            }}
+                          </span>
+
+                          <span>
+                            {{
+                              day.isWeekend
+                                ? 'Weekend'
+                                : attendanceStatus(
+                                    day.record
+                                  )
+                            }}
+                          </span>
+
+                        </div>
+
+
+                        <div
+                          class="attendance-times"
+                          *ngIf="
+                            day.record &&
+                            !day.isWeekend
+                          "
+                        >
+
+                          <span
+                            *ngIf="
+                              day.record
+                                .checkInTime
+                            "
+                          >
+                            In
+                            {{
+                              attendanceTime(
+                                day.record
+                                  .checkInTime
+                              )
+                            }}
+                          </span>
+
+                          <span
+                            *ngIf="
+                              day.record
+                                .checkOutTime
+                            "
+                          >
+                            Out
+                            {{
+                              attendanceTime(
+                                day.record
+                                  .checkOutTime
+                              )
+                            }}
+                          </span>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </section>
+
+                </div>
+
+              </ng-container>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+      </ng-container>
+
+    </tbody>
+
+  </table>
+
+
+  <!-- =====================================================
+       PAGINATION
+       ===================================================== -->
+
+  <div
+    class="pagination"
+    *ngIf="
+      !loading &&
+      !error &&
+      totalCount > 0
+    "
+  >
+
+    <div class="pagination-info">
+      Showing
+      <strong>{{ pageStart }}</strong>
+      –
+      <strong>{{ pageEnd }}</strong>
+      of
+      <strong>{{ totalCount }}</strong>
+      students
+    </div>
+
+
+    <div class="pagination-controls">
+
+      <label class="page-size">
+
+        <span>Rows</span>
+
+        <select
+          [(ngModel)]="pageSize"
+          (ngModelChange)="onPageSizeChange()"
+        >
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="25">25</option>
+          <option [ngValue]="50">50</option>
+          <option [ngValue]="100">100</option>
+        </select>
+
+      </label>
+
+
+      <button
+        type="button"
+        class="page-btn"
+        (click)="previousPage()"
+        [disabled]="currentPage === 1"
+        aria-label="Previous page"
+      >
+        ‹
+      </button>
+
+
+      <button
+        type="button"
+        class="page-btn"
+        *ngFor="let page of pageNumbers"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)"
+      >
+        {{ page }}
+      </button>
+
+
+      <button
+        type="button"
+        class="page-btn"
+        (click)="nextPage()"
+        [disabled]="currentPage === totalPages"
+        aria-label="Next page"
+      >
+        ›
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       EMPTY SEARCH STATE
+       ===================================================== -->
+
+  <div
+    class="empty"
+    *ngIf="
+      !loading &&
+      !error &&
+      totalCount === 0
+    "
+  >
+
+    <p>
+      No students match this search yet.
+    </p>
+
+  </div>
+
+</div>
+
+
+<app-student-form-modal
+  *ngIf="showModal"
+
+  [mode]="modalMode"
+
+  [student]="selectedStudent"
+
+  (saved)="onSaved()"
+
+  (closed)="closeModal()"
+></app-student-form-modal>

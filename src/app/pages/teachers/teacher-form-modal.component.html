@@ -1,0 +1,30 @@
+<app-modal [title]="title" (closed)="cancel()">
+  <form class="teacher-form" (ngSubmit)="submit()">
+    <div class="form-row">
+      <label for="fullName">Full name</label>
+      <input id="fullName" type="text" name="fullName" [(ngModel)]="fullName"
+             placeholder="Enter teacher name" [disabled]="saving" required />
+    </div>
+
+    <div class="form-row">
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" [(ngModel)]="email"
+             placeholder="teacher@example.com" [disabled]="saving" />
+    </div>
+
+    <div class="form-row">
+      <label for="code">Teacher code</label>
+      <input id="code" type="text" name="code" [(ngModel)]="code"
+             placeholder="e.g. T007" [disabled]="saving" />
+    </div>
+
+    <p class="form-error" *ngIf="error">{{ error }}</p>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost" (click)="cancel()" [disabled]="saving">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="saving">
+        {{ saving ? 'Saving…' : (mode === 'edit' ? 'Save changes' : 'Add teacher') }}
+      </button>
+    </div>
+  </form>
+</app-modal>

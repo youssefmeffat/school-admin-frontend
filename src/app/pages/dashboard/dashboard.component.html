@@ -1,0 +1,857 @@
+<app-page-header
+  [eyebrow]="'Fall Term · ' + formatCurrentDate()"
+  title="Good morning, Youssef"
+  subtitle="Here's what's moving across the school today."
+>
+</app-page-header>
+
+
+<!-- =====================================================
+     STAT CARDS
+     ===================================================== -->
+
+<div class="stat-grid">
+
+  <app-stat-card
+    label="Total students"
+    [value]="
+      loading
+        ? '—'
+        : stats.totalStudents.toString()
+    "
+  ></app-stat-card>
+
+
+  <app-stat-card
+    label="Total teachers"
+    [value]="
+      loading
+        ? '—'
+        : stats.totalTeachers.toString()
+    "
+  ></app-stat-card>
+
+
+  <app-stat-card
+    label="Total classes"
+    [value]="
+      loading
+        ? '—'
+        : stats.totalClasses.toString()
+    "
+  ></app-stat-card>
+
+
+  <app-stat-card
+    label="Exams this week"
+    [value]="
+      loading
+        ? '—'
+        : stats.examsThisWeek.toString()
+    "
+  ></app-stat-card>
+
+
+  <app-stat-card
+    label="Total subjects"
+    [value]="
+      loading
+        ? '—'
+        : stats.totalSubjects.toString()
+    "
+  ></app-stat-card>
+
+</div>
+
+
+<!-- =====================================================
+     ERROR
+     ===================================================== -->
+
+<div
+  class="dashboard-error"
+  *ngIf="error"
+>
+  {{ error }}
+</div>
+
+
+<!-- =====================================================
+     MAIN DASHBOARD GRID
+     ===================================================== -->
+
+<div class="dashboard-grid">
+
+
+  <!-- ===================================================
+       ENROLLMENT BY LEVEL
+       =================================================== -->
+
+  <section class="card panel">
+
+    <div class="panel-head">
+
+      <h2>
+        Enrollment by level
+      </h2>
+
+      <span class="panel-note">
+        {{
+          loading
+            ? 'Loading…'
+            : stats.totalStudents +
+              ' students total'
+        }}
+      </span>
+
+    </div>
+
+
+    <!-- LOADING -->
+
+    <div
+      class="dashboard-panel-state"
+      *ngIf="loading"
+    >
+      Loading enrollment…
+    </div>
+
+
+    <!-- LEVEL BARS -->
+
+    <div
+      class="bars"
+      *ngIf="
+        !loading &&
+        stats.enrollmentByLevel.length > 0
+      "
+    >
+
+      <div
+        class="bar-row"
+        *ngFor="
+          let level of
+          stats.enrollmentByLevel
+        "
+      >
+
+        <span class="bar-label">
+          {{ ordinal(level.number) }}
+        </span>
+
+
+        <div class="bar-track">
+
+          <div
+            class="bar-fill"
+            [style.width.%]="
+              enrollmentWidth(
+                level.studentCount
+              )
+            "
+          ></div>
+
+        </div>
+
+
+        <span class="bar-value">
+          {{ level.studentCount }}
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- NO DATA -->
+
+    <div
+      class="dashboard-panel-state"
+      *ngIf="
+        !loading &&
+        stats.enrollmentByLevel.length === 0
+      "
+    >
+      No grades have been created yet.
+    </div>
+
+  </section>
+
+
+
+  <!-- ===================================================
+       UPCOMING EXAMS
+       =================================================== -->
+
+  <section class="card panel">
+
+    <div class="panel-head">
+
+      <h2>
+        Upcoming exams
+      </h2>
+
+      <span class="panel-note">
+       Next 3
+      </span>
+
+    </div>
+
+
+    <!-- LOADING -->
+
+    <div
+      class="dashboard-panel-state"
+      *ngIf="loading"
+    >
+      Loading exams…
+    </div>
+
+
+    <!-- EXAMS -->
+
+    <ul
+      class="exam-list"
+      *ngIf="
+        !loading &&
+        stats.upcomingExams.length > 0
+      "
+    >
+
+      <li
+        *ngFor="
+          let e of stats.upcomingExams
+        "
+      >
+
+        <div>
+
+          <span class="exam-title">
+            {{ e.title }}
+          </span>
+
+          <span class="exam-class">
+            {{ e.gradeName }}
+            ·
+            {{ e.subjectName }}
+          </span>
+
+        </div>
+
+
+        <span class="exam-date">
+          {{ examDate(e.examDate) }}
+        </span>
+
+      </li>
+
+    </ul>
+
+
+    <!-- NO EXAMS -->
+
+    <div
+      class="dashboard-panel-state"
+      *ngIf="
+        !loading &&
+        stats.upcomingExams.length === 0
+      "
+    >
+      No upcoming exams.
+    </div>
+
+  </section>
+
+
+
+  <!-- ===================================================
+       STUDENTS PER CLASS
+       =================================================== -->
+
+  <section class="card panel">
+
+    <div class="panel-head">
+
+      <h2>
+        Students per class
+      </h2>
+
+
+      <select
+        class="level-select"
+        [(ngModel)]="selectedLevelId"
+        (ngModelChange)="onLevelChanged()"
+      >
+
+        <option
+          *ngFor="
+            let level of
+            stats.enrollmentByLevel
+          "
+          [ngValue]="level.id"
+        >
+          {{ level.name }}
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <!-- LOADING -->
+
+    <div
+      class="dashboard-panel-state"
+      *ngIf="loading"
+    >
+      Loading classes…
+    </div>
+
+
+    <!-- CLASS BARS -->
+
+    <div
+      class="bars"
+      *ngIf="
+        !loading &&
+        selectedLevelClasses.length > 0
+      "
+    >
+
+      <div
+        class="bar-row class-bar-row"
+        *ngFor="
+          let cls of
+          selectedLevelClasses
+        "
+      >
+
+        <span class="bar-label class-label">
+          {{ cls.name }}
+        </span>
+
+
+        <div class="bar-track">
+
+          <div
+            class="bar-fill"
+            [style.width.%]="
+              studentsPerClassWidth(
+                cls.studentCount
+              )
+            "
+          ></div>
+
+        </div>
+
+
+        <span class="bar-value">
+          {{ cls.studentCount }}
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- NO CLASSES -->
+
+    <div
+      class="dashboard-panel-state"
+      *ngIf="
+        !loading &&
+        selectedLevelClasses.length === 0
+      "
+    >
+      No classes have been created for this level.
+    </div>
+
+  </section>
+
+
+
+  <!-- ===================================================
+       AVERAGE SCORE BY SUBJECT
+       =================================================== -->
+
+  <section class="card panel">
+
+    <div class="panel-head">
+
+      <h2>
+        Average score by subject
+      </h2>
+
+
+      <select
+        class="level-select"
+        [(ngModel)]="selectedLevelId"
+        (ngModelChange)="onLevelChanged()"
+      >
+
+        <option
+          *ngFor="
+            let level of
+            stats.enrollmentByLevel
+          "
+          [ngValue]="level.id"
+        >
+          {{ level.name }}
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <!-- LOADING -->
+
+    <div
+      class="dashboard-panel-state"
+      *ngIf="loading"
+    >
+      Loading subject averages…
+    </div>
+
+
+    <!-- SUBJECT BARS -->
+
+    <div
+      class="bars"
+      *ngIf="
+        !loading &&
+        selectedLevelSubjects.length > 0
+      "
+    >
+
+      <div
+        class="bar-row subject-bar-row"
+        *ngFor="
+          let subject of
+          selectedLevelSubjects
+        "
+      >
+
+        <span class="bar-label">
+          {{ subject.subjectName }}
+        </span>
+
+
+        <div class="bar-track">
+
+          <div
+            class="bar-fill"
+            [style.width.%]="
+              subjectAverageWidth(
+                subject.averageScore
+              )
+            "
+          ></div>
+
+        </div>
+
+
+        <span class="bar-value">
+          {{ formatAverage(subject.averageScore) }}
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- NO SUBJECTS -->
+
+    <div
+      class="dashboard-panel-state"
+      *ngIf="
+        !loading &&
+        selectedLevelSubjects.length === 0
+      "
+    >
+      No exam results have been recorded for this level yet.
+    </div>
+
+  </section>
+
+
+
+  <!-- ===================================================
+       TEACHERS
+       =================================================== -->
+
+  <section class="card panel teachers-panel">
+
+    <div class="panel-head">
+
+      <div>
+
+        <h2>
+          Teachers
+        </h2>
+
+        <span class="panel-note">
+          Classes and subjects taught
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- LOADING -->
+
+    <div
+      class="dashboard-panel-state"
+      *ngIf="loading"
+    >
+      Loading teachers…
+    </div>
+
+
+    <!-- TEACHER LIST -->
+
+    <div
+      class="teacher-list-scroll"
+      *ngIf="
+        !loading &&
+        stats.teachers.length > 0
+      "
+    >
+
+      <div class="teacher-list">
+
+        <div
+          class="teacher-item"
+          *ngFor="
+            let teacher of stats.teachers
+          "
+        >
+
+
+        <!-- =========================================
+             TEACHER HEADER
+             ========================================= -->
+
+        <button
+          type="button"
+          class="teacher-row"
+          (click)="
+            toggleTeacher(teacher.id)
+          "
+          [attr.aria-expanded]="
+            isTeacherExpanded(teacher.id)
+          "
+        >
+
+          <span class="teacher-expand">
+            {{
+              isTeacherExpanded(teacher.id)
+                ? '−'
+                : '+'
+            }}
+          </span>
+
+
+          <span class="teacher-name">
+            {{ teacher.name }}
+          </span>
+
+
+          <span class="teacher-class-count">
+
+            {{ teacher.classCount }}
+
+            {{
+              teacher.classCount === 1
+                ? 'class'
+                : 'classes'
+            }}
+
+          </span>
+
+        </button>
+
+
+
+        <!-- =========================================
+             EXPANDED TEACHER DETAILS
+             ========================================= -->
+
+        <div
+          class="teacher-details"
+          *ngIf="
+            isTeacherExpanded(
+              teacher.id
+            )
+          "
+        >
+
+
+          <!-- =======================================
+               INDIVIDUAL CLASSES
+               ======================================= -->
+
+          <div
+            class="teacher-class"
+            *ngFor="
+              let cls of
+              getTeacherClasses(
+                teacher
+              )
+            "
+          >
+
+
+            <!-- CLASS HEADER -->
+
+            <div
+              class="teacher-class-heading"
+            >
+
+              <span
+                class="teacher-class-name"
+              >
+                {{ cls.name }}
+              </span>
+
+
+              <span
+                class="teacher-grade"
+              >
+                {{ cls.gradeName }}
+              </span>
+
+            </div>
+
+
+            <!-- =====================================
+                 SUBJECTS
+                 ===================================== -->
+
+            <div
+              class="teacher-subjects"
+              *ngIf="
+                getTeacherSubjects(cls).length > 0
+              "
+            >
+
+              <span
+                class="teacher-subject"
+                *ngFor="
+                  let subject of
+                  getTeacherSubjects(cls)
+                "
+              >
+                {{ subject.name }}
+              </span>
+
+            </div>
+
+
+            <!-- NO SUBJECTS -->
+
+            <div
+              class="teacher-no-subject"
+              *ngIf="
+                getTeacherSubjects(cls).length === 0
+              "
+            >
+              No subjects assigned.
+            </div>
+
+          </div>
+
+
+          <!-- =======================================
+               NO CLASSES
+               ======================================= -->
+
+          <div
+            class="teacher-no-subject"
+            *ngIf="
+              getTeacherClasses(teacher).length === 0
+            "
+          >
+            No classes assigned.
+          </div>
+
+        </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- NO TEACHERS -->
+
+    <div
+      class="dashboard-panel-state"
+      *ngIf="
+        !loading &&
+        stats.teachers.length === 0
+      "
+    >
+      No teachers have been assigned yet.
+    </div>
+
+  </section>
+
+
+
+  <!-- ===================================================
+       ATTENDANCE HEATMAP
+       =================================================== -->
+
+  <section class="card panel attendance-panel">
+
+    <div class="panel-head">
+
+      <div>
+
+        <h2>
+          Attendance
+        </h2>
+
+        <span class="panel-note">
+          {{ attendanceModeLabel }} · Current month
+        </span>
+
+      </div>
+
+
+      <!-- TOGGLE -->
+
+      <div class="attendance-toggle">
+
+        <button
+          type="button"
+          [class.active]="
+            attendanceMode === 'students'
+          "
+          (click)="
+            attendanceMode = 'students'
+          "
+        >
+          Students
+        </button>
+
+
+        <button
+          type="button"
+          [class.active]="
+            attendanceMode === 'teachers'
+          "
+          (click)="
+            attendanceMode = 'teachers'
+          "
+        >
+          Teachers
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- LOADING -->
+
+    <div
+      class="dashboard-panel-state"
+      *ngIf="loading"
+    >
+      Loading attendance…
+    </div>
+
+
+    <!-- HEATMAP -->
+
+    <div
+      class="attendance-heatmap"
+      *ngIf="
+        !loading &&
+        attendanceDays.length > 0
+      "
+    >
+
+      <div
+        class="attendance-day"
+        *ngFor="
+          let day of attendanceDays
+        "
+        [style.background]="
+          attendanceColor(day)
+        "
+        [title]="
+          attendanceTooltip(day)
+        "
+      >
+
+        <span class="attendance-day-number">
+          {{ day.day }}
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- NO DATA -->
+
+    <div
+      class="dashboard-panel-state"
+      *ngIf="
+        !loading &&
+        attendanceDays.length === 0
+      "
+    >
+      No attendance records have been created for this month.
+    </div>
+
+
+    <!-- LEGEND -->
+
+    <div
+      class="attendance-legend"
+      *ngIf="
+        !loading &&
+        attendanceDays.length > 0
+      "
+    >
+
+      <span>
+        Less
+      </span>
+
+
+      <span
+        class="legend-square legend-low"
+      ></span>
+
+
+      <span
+        class="legend-square legend-mid"
+      ></span>
+
+
+      <span
+        class="legend-square legend-high"
+      ></span>
+
+
+      <span
+        class="legend-square legend-max"
+      ></span>
+
+
+      <span>
+        More
+      </span>
+
+    </div>
+
+  </section>
+
+</div>

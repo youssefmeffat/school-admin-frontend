@@ -1,0 +1,30 @@
+<app-modal [title]="title" (closed)="cancel()">
+  <form class="grade-form" (ngSubmit)="submit()" #form="ngForm">
+    <div class="form-row">
+      <label for="name">Grade name</label>
+      <input id="name" type="text" name="name" [(ngModel)]="name"
+             placeholder="e.g. Grade 1" [disabled]="saving" required />
+    </div>
+
+    <div class="form-row">
+      <label for="number">Grade number</label>
+      <input id="number" type="number" name="number" [(ngModel)]="number"
+             min="1" [disabled]="saving" required />
+    </div>
+
+    <div class="form-row">
+      <label for="description">Description</label>
+      <textarea id="description" name="description" [(ngModel)]="description"
+                placeholder="Optional description" rows="3" [disabled]="saving"></textarea>
+    </div>
+
+    <p class="form-error" *ngIf="error">{{ error }}</p>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost" (click)="cancel()" [disabled]="saving">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="saving">
+        {{ saving ? 'Saving…' : (mode === 'edit' ? 'Save changes' : 'Add grade') }}
+      </button>
+    </div>
+  </form>
+</app-modal>

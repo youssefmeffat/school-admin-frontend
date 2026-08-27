@@ -1,0 +1,40 @@
+<app-modal [title]="title" (closed)="cancel()">
+  <form class="student-form" (ngSubmit)="submit()" #form="ngForm">
+    <div class="form-row">
+      <label for="fullName">Full name</label>
+      <input id="fullName" type="text" name="fullName" [(ngModel)]="fullName" required />
+    </div>
+
+    <div class="form-row">
+      <label for="code">Student code</label>
+      <input id="code" type="text" name="code" [(ngModel)]="code" required />
+    </div>
+
+    <div class="form-row">
+      <label for="dateOfBirth">Date of birth</label>
+      <input id="dateOfBirth" type="date" name="dateOfBirth" [(ngModel)]="dateOfBirth" />
+    </div>
+
+    <div class="form-row">
+      <label for="enrollDate">Enrollment date</label>
+      <input id="enrollDate" type="date" name="enrollDate" [(ngModel)]="enrollDate" />
+    </div>
+
+    <div class="form-row">
+      <label for="classId">Class</label>
+      <select id="classId" name="classId" [(ngModel)]="classId" [disabled]="classesLoading">
+        <option [ngValue]="null">— No class —</option>
+        <option *ngFor="let c of classes" [ngValue]="c.id">{{ c.name }}</option>
+      </select>
+    </div>
+
+    <p class="form-error" *ngIf="error">{{ error }}</p>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost" (click)="cancel()" [disabled]="saving">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="saving">
+        {{ saving ? 'Saving…' : (mode === 'edit' ? 'Save changes' : 'Add student') }}
+      </button>
+    </div>
+  </form>
+</app-modal>

@@ -1,0 +1,50 @@
+// .modal-panel also has the global "card" class in the template, so it
+// already inherits --white background, --line border, --radius-lg, and
+// --shadow-card. This file only handles positioning + header/close chrome.
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 51, 42, 0.45); // forest-900 tint, matches the ledger palette
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.modal-title {
+  // h2 already gets font-display / forest-900 / weight 600 globally
+  margin: 0;
+  font-size: 18px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+}
+.modal-close:hover {
+  color: var(--forest-900);
+  background: var(--sage-50);
+}

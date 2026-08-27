@@ -1,0 +1,56 @@
+.student-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  label {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  input,
+  select {
+    font-family: var(--font-body);
+    font-size: 13px;
+    padding: 9px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--ink);
+    outline: none;
+  }
+  input:focus,
+  select:focus {
+    border-color: var(--forest-700);
+  }
+  select:disabled {
+    color: var(--muted);
+    background: var(--sage-50);
+  }
+}
+
+.form-error {
+  margin: 0;
+  padding: 8px 12px;
+  background: var(--danger-100);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}

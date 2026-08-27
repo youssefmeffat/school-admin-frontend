@@ -1,0 +1,11 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal-panel card" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2 class="modal-title">{{ title }}</h2>
+      <button class="modal-close" type="button" (click)="close()" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

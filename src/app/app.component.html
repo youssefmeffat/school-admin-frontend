@@ -1,0 +1,38 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="seal brand-seal">Fs</span>
+      <div class="brand-text">
+        <span class="brand-name">Flairschool</span>
+        <span class="brand-sub">Admin Console</span>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <span class="nav-label">Overview</span>
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <svg viewBox="0 0 24 24" class="nav-icon"><path [attr.d]="item.icon" /></svg>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="seal user-seal">YE</span>
+      <div class="user-info">
+        <span class="user-name">Youssef Effat</span>
+        <span class="user-role">Admin</span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-col">
+<main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

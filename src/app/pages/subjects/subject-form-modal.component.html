@@ -1,0 +1,18 @@
+<app-modal [title]="title" (closed)="cancel()">
+  <form class="subject-form" (ngSubmit)="submit()">
+    <div class="form-row">
+      <label for="subject-name">Subject name</label>
+      <input id="subject-name" type="text" name="name" [(ngModel)]="name"
+             placeholder="e.g. Mathematics" [disabled]="saving" required />
+    </div>
+
+    <p class="form-error" *ngIf="error">{{ error }}</p>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost" (click)="cancel()" [disabled]="saving">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="saving">
+        {{ saving ? 'Saving…' : (mode === 'edit' ? 'Save changes' : 'Add subject') }}
+      </button>
+    </div>
+  </form>
+</app-modal>
