@@ -18,6 +18,8 @@ import { TeachingAssignmentsService } from '../../services/teaching-assignments.
 import { TeacherFormModalComponent } from './teacher-form-modal.component';
 import { TeachingAssignmentModalComponent } from './teaching-assignment-modal.component';
 
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+
 @Component({
   selector: 'app-teachers',
   standalone: true,
@@ -71,6 +73,7 @@ export class TeachersComponent implements OnInit, OnDestroy {
   constructor(
     private teachersService: TeachersService,
     private teachingAssignmentsService: TeachingAssignmentsService,
+    private confirmDialogService: ConfirmDialogService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -215,16 +218,17 @@ export class TeachersComponent implements OnInit, OnDestroy {
     this.fetch(this.currentPage);
   }
 
-  deleteTeacher(teacher: Teacher): void {
+  async deleteTeacher(teacher: Teacher): Promise<void> {
     if (this.deletingId !== null) return;
 
-    if (
-      !window.confirm(
-        `Delete ${teacher.fullName}? This cannot be undone.`
-      )
-    ) {
-      return;
-    }
+    const confirmed = await this.confirmDialogService.confirm({
+      title: 'Delete teacher',
+      message: `Delete ${teacher.fullName}? This cannot be undone.`,
+      confirmText: 'Delete',
+      danger: true,
+    });
+
+    if (!confirmed) return;
 
     this.deletingId = teacher.id;
     this.error = '';
@@ -336,16 +340,19 @@ export class TeachersComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeAssignment(assignment: TeachingAssignment): void {
+  async removeAssignment(assignment: TeachingAssignment): Promise<void> {
     if (this.deletingAssignmentId !== null) {
       return;
     }
 
-    if (
-      !window.confirm(
-        `Unassign ${assignment.teacherName} as ${assignment.subjectName} teacher from ${assignment.className}?`
-      )
-    ) {
+    const confirmed = await this.confirmDialogService.confirm({
+      title: 'Unassign teacher',
+      message: `Unassign ${assignment.teacherName} as ${assignment.subjectName} teacher from ${assignment.className}?`,
+      confirmText: 'Unassign',
+      danger: true,
+    });
+
+    if (!confirmed) {
       return;
     }
 

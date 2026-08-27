@@ -102,6 +102,12 @@ a { color: inherit; }
 }
 .btn-ghost:hover { background: var(--white); border-color: var(--forest-700); }
 
+.btn-danger {
+  background: var(--danger);
+  color: var(--white);
+}
+.btn-danger:hover { background: #98342e; }
+
 .card {
   background: var(--white);
   border: 1px solid var(--line);
