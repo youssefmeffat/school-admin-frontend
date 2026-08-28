@@ -89,6 +89,17 @@ export class StudentFormModalComponent implements OnInit, OnChanges {
       return;
     }
 
+    const normalizedCode =
+      this.code.trim().toUpperCase();
+
+    if (!/^S\d{4}$/.test(normalizedCode)) {
+      this.codeError =
+        'Student code must follow the format S1234.';
+      return;
+    }
+
+    this.code = normalizedCode;
+
     if (
       this.dateOfBirth &&
       this.enrollDate &&
@@ -137,16 +148,18 @@ export class StudentFormModalComponent implements OnInit, OnChanges {
 
     const backendMessage = this.extractErrorMessage(err);
 
+    const normalizedMessage =
+      backendMessage.toLowerCase();
+
     if (
-      backendMessage
-        .toLowerCase()
-        .includes('student code') ||
-      backendMessage
-        .toLowerCase()
-        .includes('code is already') ||
-      backendMessage
-        .toLowerCase()
-        .includes('code already')
+      normalizedMessage.includes('format s1234')
+    ) {
+      this.codeError =
+        'Student code must follow the format S1234.';
+    } else if (
+      normalizedMessage.includes('student code') ||
+      normalizedMessage.includes('code is already') ||
+      normalizedMessage.includes('code already')
     ) {
       this.codeError =
         'This student code is already in use. Choose a different code.';
@@ -230,6 +243,11 @@ export class StudentFormModalComponent implements OnInit, OnChanges {
   }
 
   onCodeChange(): void {
+    this.code =
+      this.code
+        .toUpperCase()
+        .slice(0, 5);
+
     this.codeError = '';
   }
 
